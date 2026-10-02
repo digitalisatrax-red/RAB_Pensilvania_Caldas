@@ -29,6 +29,13 @@
     const s = cap.simbologia, o = mapa.opac[cap.id] ?? 1, sel = RAB.estado.v.zona;
     const c = colorExpr(s);
     const esZona = cap.id === 'ordenamiento_predial';
+    if (cap.id === 'predios') {
+      const sp = RAB.estado.v.predio, es = sp ? ['in', ',' + sp + ',', ['get', 'ids']] : null;
+      return {
+        fill: { 'fill-color': c, 'fill-opacity': es ? ['case', es, 0.55 * o, 0.06 * o] : 0.1 * o },
+        line: { 'line-color': es ? ['case', es, '#7a4b00', '#8a5a00'] : '#8a5a00', 'line-width': es ? ['case', es, 4, 1.6] : 1.8, 'line-opacity': Math.min(1, 0.95 * o) },
+      };
+    }
     if (cap.geometria === 'poligono') {
       const rel = s.tipo === 'categorica' ? 0.5 : (s.relleno ?? 0.35);
       const fillOp = esZona && sel !== 'toda' ? ['case', ['==', ['get', 'zona'], sel], 0.75 * o, 0.1 * o] : rel * o;
@@ -113,6 +120,7 @@
       if (!fs.length) return;
       const f = fs[0], capId = f.layer.id.split(':')[0], cap = RAB.datos.porId.get(capId);
       if (capId === 'ordenamiento_predial' && f.properties.zona) RAB.estado.set({ zona: f.properties.zona });
+      if (capId === 'predios' && f.properties.id) RAB.estado.set({ predio: RAB.estado.v.predio === f.properties.id ? null : f.properties.id });
       abrirPopup(cap, f.properties, e.lngLat);
     });
   };
@@ -185,6 +193,20 @@
   mapa.aplicarZona = function () {
     if (!mapa.listo || !mapa.visibles.has('ordenamiento_predial')) return;
     mapa.opacidad('ordenamiento_predial', mapa.opac.ordenamiento_predial ?? 1);
+  };
+  /* Predio seleccionado: resalta su polígono y encuadra el mapa; si la capa de predios está apagada, la enciende. */
+  mapa.aplicarPredio = async function () {
+    if (!mapa.listo) return;
+    const pid = RAB.estado.v.predio;
+    if (pid && !mapa.visibles.has('predios')) RAB.estado.set({ capas: [...RAB.estado.v.capas, 'predios'] });
+    if (mapa.visibles.has('predios') && mapa.map.getLayer('predios:fill')) mapa.opacidad('predios', mapa.opac.predios ?? 1);
+    if (!pid) return;
+    try {
+      const data = await RAB.datos.capa('predios'), f = data.features.find((x) => x.properties.ids.includes(',' + pid + ','));
+      if (!f) { aviso('Este predio no tiene polígono catastral dentro de la RAB; se muestran sus cifras.'); setTimeout(() => aviso(''), 5000); return; }
+      const bb = [999, 999, -999, -999], rec = (a) => { if (typeof a[0] === 'number') { bb[0] = Math.min(bb[0], a[0]); bb[1] = Math.min(bb[1], a[1]); bb[2] = Math.max(bb[2], a[0]); bb[3] = Math.max(bb[3], a[1]); } else a.forEach(rec); };
+      rec(f.geometry.coordinates); mapa.volarBbox(bb);
+    } catch (e) { /* la capa no está disponible: se conserva la selección */ }
   };
   mapa.aZona = function (zid) {
     const bb = zid === 'toda' ? RAB.datos.zonas.reserva.bbox : RAB.datos.zonaPorId.get(zid).bbox;
