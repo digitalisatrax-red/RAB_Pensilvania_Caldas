@@ -169,6 +169,7 @@
   mapa.reordenar = function () {
     const orden = [...mapa.visibles].map((id) => RAB.datos.porId.get(id)).sort((a, b) => RANGO[a.geometria] - RANGO[b.geometria]);
     orden.forEach((cap) => ids(cap).forEach((i) => mapa.map.getLayer(i) && mapa.map.moveLayer(i)));
+    mapa.subirMascara && mapa.subirMascara();
   };
   /* Alinea las capas del mapa con el estado (lista de ids visibles). */
   mapa.sincronizar = function () {
@@ -194,18 +195,27 @@
     if (!mapa.listo || !mapa.visibles.has('ordenamiento_predial')) return;
     mapa.opacidad('ordenamiento_predial', mapa.opac.ordenamiento_predial ?? 1);
   };
-  /* Predio seleccionado: resalta su polígono y encuadra el mapa; si la capa de predios está apagada, la enciende. */
+  /* Predio seleccionado: recorta el mapa a su(s) polígono(s) con una máscara blanca y lo encuadra; enciende la capa de predios si está apagada. */
+  mapa.subirMascara = function () { const m = mapa.map; if (!m || !m.getLayer('predio-mask')) return; m.moveLayer('predio-mask'); if (m.getLayer('predios:line')) m.moveLayer('predios:line'); };
+  function quitarMascara() { const m = mapa.map; if (m.getLayer('predio-mask')) m.removeLayer('predio-mask'); if (m.getSource('predio-mask')) m.removeSource('predio-mask'); }
   mapa.aplicarPredio = async function () {
     if (!mapa.listo) return;
-    const pid = RAB.estado.v.predio;
+    const pid = RAB.estado.v.predio, m = mapa.map;
     if (pid && !mapa.visibles.has('predios')) RAB.estado.set({ capas: [...RAB.estado.v.capas, 'predios'] });
-    if (mapa.visibles.has('predios') && mapa.map.getLayer('predios:fill')) mapa.opacidad('predios', mapa.opac.predios ?? 1);
+    if (mapa.visibles.has('predios') && m.getLayer('predios:fill')) mapa.opacidad('predios', mapa.opac.predios ?? 1);
+    quitarMascara();
+    ['predios:fill', 'predios:line'].forEach((i) => { if (m.getLayer(i)) m.setFilter(i, pid ? ['in', ',' + pid + ',', ['get', 'ids']] : null); });
     if (!pid) return;
     try {
-      const data = await RAB.datos.capa('predios'), f = data.features.find((x) => x.properties.ids.includes(',' + pid + ','));
-      if (!f) { aviso('Este predio no tiene polígono catastral dentro de la RAB; se muestran sus cifras.'); setTimeout(() => aviso(''), 5000); return; }
-      const bb = [999, 999, -999, -999], rec = (a) => { if (typeof a[0] === 'number') { bb[0] = Math.min(bb[0], a[0]); bb[1] = Math.min(bb[1], a[1]); bb[2] = Math.max(bb[2], a[0]); bb[3] = Math.max(bb[3], a[1]); } else a.forEach(rec); };
-      rec(f.geometry.coordinates); mapa.volarBbox(bb);
+      const data = await RAB.datos.capa('predios'), fs = data.features.filter((x) => x.properties.ids.includes(',' + pid + ','));
+      if (RAB.estado.v.predio !== pid) return;
+      if (!fs.length) { aviso('Este predio no tiene polígono catastral dentro de la RAB; se muestran sus cifras.'); setTimeout(() => aviso(''), 5000); return; }
+      const bb = [999, 999, -999, -999], huecos = [], rec = (a) => { if (typeof a[0] === 'number') { bb[0] = Math.min(bb[0], a[0]); bb[1] = Math.min(bb[1], a[1]); bb[2] = Math.max(bb[2], a[0]); bb[3] = Math.max(bb[3], a[1]); } else a.forEach(rec); };
+      fs.forEach((f) => { (f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates).forEach((p) => huecos.push(p[0])); rec(f.geometry.coordinates); });
+      quitarMascara();
+      m.addSource('predio-mask', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [[[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]], ...huecos] } } });
+      m.addLayer({ id: 'predio-mask', type: 'fill', source: 'predio-mask', paint: { 'fill-color': '#ffffff', 'fill-opacity': 0.95 } });
+      mapa.subirMascara(); mapa.volarBbox(bb);
     } catch (e) { /* la capa no está disponible: se conserva la selección */ }
   };
   mapa.aZona = function (zid) {
