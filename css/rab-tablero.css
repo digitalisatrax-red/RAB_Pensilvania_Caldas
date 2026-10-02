@@ -209,3 +209,17 @@ td i{font-style:italic}
 }
 
 .tabla-scroll td small{color:var(--muted);font-size:10px}.tabla-scroll td,.tabla-scroll th{padding:4px 5px}
+
+/* Fondo blanco (tema claro) */
+:root:not([data-tema="oscuro"]) .dashboard-frame{background:#fff;border:1px solid var(--edge);box-shadow:0 1px 6px rgba(0,0,0,.08)}
+:root:not([data-tema="oscuro"]) .sidebar{color:var(--ink)}
+:root:not([data-tema="oscuro"]) .side-brand-caption,:root:not([data-tema="oscuro"]) .layer-group>summary{color:var(--muted)}
+:root:not([data-tema="oscuro"]) .side-emblem img{background:#fff;padding:0}
+:root:not([data-tema="oscuro"]) .layer-group{border-top-color:var(--edge)}
+:root:not([data-tema="oscuro"]) .side-rule{background:var(--edge)}
+:root:not([data-tema="oscuro"]) .layer-top label{color:var(--ink)}
+:root:not([data-tema="oscuro"]) .layer-top .mini{border-color:#b9c2bb;color:var(--ink)}
+:root:not([data-tema="oscuro"]) .layer-top .mini:hover{background:var(--pale)}
+:root:not([data-tema="oscuro"]) .sidebar select,:root:not([data-tema="oscuro"]) .view-modes button{background:var(--pale);border:1px solid var(--edge)}
+:root:not([data-tema="oscuro"]) .view-modes button[aria-pressed="true"],:root:not([data-tema="oscuro"]) .view-modes button:hover{background:var(--accent);border-color:var(--accent)}
+.base-aviso{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;background:#fff8e6;color:#5a3f00;border:1px solid #d9a441;border-radius:6px;padding:4px 10px;font-size:11px;max-width:80%}

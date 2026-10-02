@@ -1,13 +1,14 @@
 /* Mapa MapLibre: bases, capas bajo demanda, simbología desde el catálogo, popups y selección de zona. */
 (function () {
-  const sub = ['a', 'b', 'c', 'd'];
-  const carto = (n) => sub.map((s) => `https://${s}.basemaps.cartocdn.com/${n}/{z}/{x}/{y}.png`);
+  const esri = (n) => [`https://server.arcgisonline.com/ArcGIS/rest/services/${n}/MapServer/tile/{z}/{y}/{x}`];
+  const ATR_ESRI = 'Tiles © Esri — Esri, HERE, Garmin, FAO, NOAA, USGS, OpenStreetMap contributors';
+  // Se evitan las teselas de CARTO: desde sitios publicados devuelven marca de agua «API key required».
   const BASES = {
-    claro: { tiles: carto('light_all'), attr: '© OpenStreetMap · © CARTO' },
-    color: { tiles: carto('rastertiles/voyager'), attr: '© OpenStreetMap · © CARTO' },
-    oscuro: { tiles: carto('dark_all'), attr: '© OpenStreetMap · © CARTO' },
-    osm: { tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], attr: '© OpenStreetMap contributors' },
-    satelite: { tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], attr: 'Imágenes © Esri, Maxar, Earthstar Geographics' },
+    claro: { tiles: esri('Canvas/World_Light_Gray_Base'), attr: ATR_ESRI, max: 16 },
+    color: { tiles: esri('World_Topo_Map'), attr: ATR_ESRI, max: 19 },
+    oscuro: { tiles: esri('Canvas/World_Dark_Gray_Base'), attr: ATR_ESRI, max: 16 },
+    satelite: { tiles: esri('World_Imagery'), attr: 'Imágenes © Esri, Maxar, Earthstar Geographics', max: 19 },
+    osm: { tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], attr: '© OpenStreetMap contributors', max: 19 },
   };
   const RANGO = { poligono: 0, linea: 1, punto: 2 };
   const mapa = RAB.mapa = { map: null, listo: false, visibles: new Set(), opac: {}, onEstadoCapa: null, marcador: null };
@@ -56,7 +57,7 @@
     const m = mapa.map, b = BASES[actual];
     if (m.getLayer('base')) m.removeLayer('base');
     if (m.getSource('base')) m.removeSource('base');
-    m.addSource('base', { type: 'raster', tiles: b.tiles, tileSize: 256, maxzoom: 19, attribution: b.attr });
+    m.addSource('base', { type: 'raster', tiles: b.tiles, tileSize: 256, maxzoom: b.max || 19, attribution: b.attr });
     const primero = [...mapa.visibles].flatMap((id) => ids(RAB.datos.porId.get(id))).find((i) => m.getLayer(i));
     m.addLayer({ id: 'base', type: 'raster', source: 'base' }, primero);
   }
@@ -66,7 +67,7 @@
     mapa.map.on('error', (e) => {
       if (!e || !e.sourceId || e.sourceId !== 'base') return;
       if (++fallos === 4) {
-        if (actual !== 'osm') { aviso('El mapa base no responde; se usa OpenStreetMap.'); const sel = document.getElementById('baseSelect'); const m = mapa.map; fallos = 0; const b = BASES.osm; if (m.getLayer('base')) m.removeLayer('base'); if (m.getSource('base')) m.removeSource('base'); m.addSource('base', { type: 'raster', tiles: b.tiles, tileSize: 256, maxzoom: 19, attribution: b.attr }); const primero = [...mapa.visibles].flatMap((id) => ids(RAB.datos.porId.get(id))).find((i) => m.getLayer(i)); m.addLayer({ id: 'base', type: 'raster', source: 'base' }, primero); actual = 'osm'; }
+        if (actual !== 'osm') { aviso('El mapa base no responde; se usa OpenStreetMap.'); const sel = document.getElementById('baseSelect'); const m = mapa.map; fallos = 0; const b = BASES.osm; if (m.getLayer('base')) m.removeLayer('base'); if (m.getSource('base')) m.removeSource('base'); m.addSource('base', { type: 'raster', tiles: b.tiles, tileSize: 256, maxzoom: b.max || 19, attribution: b.attr }); const primero = [...mapa.visibles].flatMap((id) => ids(RAB.datos.porId.get(id))).find((i) => m.getLayer(i)); m.addLayer({ id: 'base', type: 'raster', source: 'base' }, primero); actual = 'osm'; }
         else aviso('No se pudo cargar ningún mapa base. Revise la conexión; las capas del visor siguen disponibles.');
       }
     });

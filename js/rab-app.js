@@ -86,7 +86,7 @@
     $('baseSelect').value = RAB.estado.v.base;
     $('baseSelect').onchange = (e) => RAB.estado.set({ base: e.target.value });
     $('btnTema').onclick = () => {
-      const oscuro = RAB.estado.v.tema ? RAB.estado.v.tema === 'oscuro' : matchMedia('(prefers-color-scheme: dark)').matches;
+      const oscuro = RAB.estado.v.tema === 'oscuro';
       RAB.estado.set({ tema: oscuro ? 'claro' : 'oscuro' });
     };
     $('btnEnlace').onclick = async () => {

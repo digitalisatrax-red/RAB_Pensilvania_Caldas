@@ -12,7 +12,7 @@
   --card: #f7f8f7;
   --card-hi: #ffffff;
   --canvas: #ffffff;
-  --page: #d9dadd;
+  --page: #ffffff;
   --bar: #295d3e;
   --bar-soft: #a9c5a9;
   --link: #1f5f8b;
@@ -37,10 +37,4 @@
   --warn: #f08a72;
   color-scheme: dark;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-tema="claro"]) {
-    --ink: #e8efe9; --muted: #a9b8ad; --green: #8fc79d; --pale: #16201a; --edge: #27332b;
-    --card: #18221c; --card-hi: #1f2b24; --canvas: #0f1612; --page: #000; --bar: #6fae80;
-    --bar-soft: #365a43; --link: #8cc3e8; --warn: #f08a72; color-scheme: dark;
-  }
-}
+/* El tablero siempre inicia en tema claro (fondo blanco); el oscuro es opcional con el botón Tema. */
