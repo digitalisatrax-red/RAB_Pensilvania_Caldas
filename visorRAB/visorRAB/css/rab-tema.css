@@ -1,0 +1,46 @@
+/* Tokens de marca FCV. Contrastes verificados contra WCAG 2.1 AA (texto normal ≥ 4.5:1). */
+:root {
+  --ink: #18201c;
+  --muted: #55615a;
+  --green: #295d3e;
+  --green2: #8fb78c;
+  --accent: #7db788;
+  --on-accent: #0b1f14;
+  --pale: #f4f5f3;
+  --edge: #e8ebe7;
+  --dark: #050706;
+  --card: #f7f8f7;
+  --card-hi: #ffffff;
+  --canvas: #ffffff;
+  --page: #d9dadd;
+  --bar: #295d3e;
+  --bar-soft: #a9c5a9;
+  --link: #1f5f8b;
+  --warn: #9a3f2b;
+  --amber: #d9a441;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .12);
+  color-scheme: light;
+}
+:root[data-tema="oscuro"] {
+  --ink: #e8efe9;
+  --muted: #a9b8ad;
+  --green: #8fc79d;
+  --pale: #16201a;
+  --edge: #27332b;
+  --card: #18221c;
+  --card-hi: #1f2b24;
+  --canvas: #0f1612;
+  --page: #000;
+  --bar: #6fae80;
+  --bar-soft: #365a43;
+  --link: #8cc3e8;
+  --warn: #f08a72;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --ink: #e8efe9; --muted: #a9b8ad; --green: #8fc79d; --pale: #16201a; --edge: #27332b;
+    --card: #18221c; --card-hi: #1f2b24; --canvas: #0f1612; --page: #000; --bar: #6fae80;
+    --bar-soft: #365a43; --link: #8cc3e8; --warn: #f08a72; color-scheme: dark;
+  }
+}

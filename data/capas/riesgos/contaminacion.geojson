@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","id":0,"geometry":{"type":"Point","coordinates":[-75.118279,5.45862]},"properties":{"zona":"uso_intensivo"}},{"type":"Feature","id":1,"geometry":{"type":"Point","coordinates":[-75.118216,5.45921]},"properties":{"zona":"entorno"}}]}

@@ -1,0 +1,24 @@
+/* Ficha de zona imprimible: Ctrl+P genera un PDF paginado sin barra lateral ni controles. */
+@media print {
+  @page { size: A4; margin: 14mm 12mm; }
+  html, body { background: #fff !important; color: #111 !important; }
+  .skip, .dashboard-frame, #aviso, dialog { display: none !important; }
+  .solo-impresion { display: block !important; font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; }
+  .solo-impresion header { display: flex; align-items: center; justify-content: space-between; gap: 12pt; border-bottom: 2px solid #295d3e; padding-bottom: 8pt; margin-bottom: 10pt; }
+  .solo-impresion header img { height: 42pt; }
+  .solo-impresion h1 { font-size: 17pt; margin: 0; color: #295d3e; letter-spacing: 0; }
+  .solo-impresion h2 { font-size: 11.5pt; margin: 12pt 0 4pt; color: #295d3e; break-after: avoid; }
+  .solo-impresion .meta { font-size: 9pt; color: #444; text-align: right; }
+  .solo-impresion .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6pt; }
+  .solo-impresion .kpis div { border: 1px solid #c9d3cb; border-radius: 4pt; padding: 5pt 7pt; break-inside: avoid; }
+  .solo-impresion .kpis strong { display: block; font-size: 14pt; }
+  .solo-impresion .kpis span { font-size: 8.5pt; color: #444; }
+  .solo-impresion img.mapa { width: 100%; max-height: 105mm; object-fit: contain; border: 1px solid #c9d3cb; break-inside: avoid; }
+  .solo-impresion table { width: 100%; border-collapse: collapse; font-size: 9pt; break-inside: auto; }
+  .solo-impresion tr { break-inside: avoid; }
+  .solo-impresion th { background: #e8ebe7; text-align: left; padding: 3pt 4pt; position: static; }
+  .solo-impresion td { padding: 3pt 4pt; border-top: 1px solid #d5dcd6; }
+  .solo-impresion .num { text-align: right; }
+  .solo-impresion .fuente { font-size: 8pt; color: #555; border: 0; padding: 0; margin: 3pt 0 0; }
+  .solo-impresion .pie { margin-top: 12pt; font-size: 8pt; color: #555; border-top: 1px solid #c9d3cb; padding-top: 4pt; }
+}

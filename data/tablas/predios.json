@@ -1,0 +1,353 @@
+{
+ "version": 1,
+ "predios": [
+  {
+   "id": "ad-1",
+   "nombre_predio": "Ayacucho (+Mariposas)",
+   "estado": "Adquirido",
+   "area_sig_ha": 35.54,
+   "area_escritura_ha": 20.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 23.85,
+    "bosque_joven": 7.18,
+    "matorral": 3.22,
+    "pastizal": 0.19,
+    "sin_vegetacion": 0.08,
+    "vias": 1.01
+   }
+  },
+  {
+   "id": "ad-2",
+   "nombre_predio": "El Rocio No.2",
+   "estado": "Adquirido",
+   "area_sig_ha": 32.21,
+   "area_escritura_ha": 22.5,
+   "cobertura_ha": {
+    "bosque_avanzado": 28.16,
+    "plantacion_pino": 3.86,
+    "sin_vegetacion": 0.19,
+    "vias": 0.01
+   }
+  },
+  {
+   "id": "ad-3",
+   "nombre_predio": "Los Cerezos",
+   "estado": "Adquirido",
+   "area_sig_ha": 17.14,
+   "area_escritura_ha": 18.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 13.85,
+    "matorral": 0.64,
+    "plantacion_pino": 1.42,
+    "pastizal": 0.58,
+    "vias": 0.65
+   }
+  },
+  {
+   "id": "ad-4",
+   "nombre_predio": "Las Mariposas",
+   "estado": "Adquirido",
+   "area_sig_ha": null,
+   "area_escritura_ha": null,
+   "cobertura_ha": {}
+  },
+  {
+   "id": "ad-5",
+   "nombre_predio": "La Gaviota",
+   "estado": "Adquirido",
+   "area_sig_ha": 62.88,
+   "area_escritura_ha": 59.9,
+   "cobertura_ha": {
+    "bosque_avanzado": 52.36,
+    "matorral": 0.04,
+    "plantacion_pino": 0.92,
+    "pastizal": 9.41,
+    "sin_vegetacion": 0.15
+   }
+  },
+  {
+   "id": "ad-6",
+   "nombre_predio": "El Rocio",
+   "estado": "Adquirido",
+   "area_sig_ha": 15.44,
+   "area_escritura_ha": 22.5,
+   "cobertura_ha": {
+    "bosque_avanzado": 5.63,
+    "plantacion_pino": 3.15,
+    "pastizal": 6.58,
+    "drenajes": 0.08
+   }
+  },
+  {
+   "id": "ad-7",
+   "nombre_predio": "La Divisa",
+   "estado": "Adquirido",
+   "area_sig_ha": 36.49,
+   "area_escritura_ha": 78.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 15.63,
+    "bosque_joven": 18.97,
+    "plantacion_pino": 1.47,
+    "pastizal": 0.41
+   }
+  },
+  {
+   "id": "ad-8",
+   "nombre_predio": "La Cumbre",
+   "estado": "Adquirido",
+   "area_sig_ha": 32.64,
+   "area_escritura_ha": 24.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 22.28,
+    "bosque_joven": 5.45,
+    "matorral": 4.18,
+    "vias": 0.73
+   }
+  },
+  {
+   "id": "ad-9",
+   "nombre_predio": "El Cedro",
+   "estado": "Adquirido",
+   "area_sig_ha": 6.08,
+   "area_escritura_ha": 2.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 6.08
+   }
+  },
+  {
+   "id": "ad-10",
+   "nombre_predio": "Rincon Santo-El Retiro",
+   "estado": "Adquirido",
+   "area_sig_ha": 8.33,
+   "area_escritura_ha": 15.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 6.66,
+    "bosque_joven": 1.39,
+    "plantacion_pino": 0.28
+   }
+  },
+  {
+   "id": "ad-11",
+   "nombre_predio": "El Silencio",
+   "estado": "Adquirido",
+   "area_sig_ha": 6.41,
+   "area_escritura_ha": 18.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 5.71,
+    "bosque_joven": 0.05,
+    "matorral": 0.45,
+    "vias": 0.19
+   }
+  },
+  {
+   "id": "ad-12",
+   "nombre_predio": "El Potrero",
+   "estado": "Adquirido",
+   "area_sig_ha": 73.14,
+   "area_escritura_ha": 20.0,
+   "cobertura_ha": {}
+  },
+  {
+   "id": "ad-13",
+   "nombre_predio": "Santa Rosa",
+   "estado": "Adquirido",
+   "area_sig_ha": null,
+   "area_escritura_ha": 18.0,
+   "cobertura_ha": {}
+  },
+  {
+   "id": "ad-14",
+   "nombre_predio": "El Laurel",
+   "estado": "Adquirido",
+   "area_sig_ha": null,
+   "area_escritura_ha": 7.0,
+   "cobertura_ha": {}
+  },
+  {
+   "id": "ad-15",
+   "nombre_predio": "Laurel",
+   "estado": "Adquirido",
+   "area_sig_ha": null,
+   "area_escritura_ha": 1.0,
+   "cobertura_ha": {}
+  },
+  {
+   "id": "ad-16",
+   "nombre_predio": "El Silencio",
+   "estado": "Adquirido",
+   "area_sig_ha": null,
+   "area_escritura_ha": 18.0,
+   "cobertura_ha": {}
+  },
+  {
+   "id": "ad-17",
+   "nombre_predio": "El Clavel",
+   "estado": "Adquirido",
+   "area_sig_ha": null,
+   "area_escritura_ha": 4.86,
+   "cobertura_ha": {}
+  },
+  {
+   "id": "ad-18",
+   "nombre_predio": "La Bella",
+   "estado": "Adquirido",
+   "area_sig_ha": 10.37,
+   "area_escritura_ha": 2.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 8.52,
+    "bosque_joven": 1.79,
+    "pastizal": 0.06
+   }
+  },
+  {
+   "id": "ad-19",
+   "nombre_predio": "La Independencia",
+   "estado": "Adquirido",
+   "area_sig_ha": 4.4,
+   "area_escritura_ha": 4.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 3.9,
+    "plantacion_pino": 0.41,
+    "pastizal": 0.08
+   }
+  },
+  {
+   "id": "ad-20",
+   "nombre_predio": "La Independencia2",
+   "estado": "Adquirido",
+   "area_sig_ha": 14.91,
+   "area_escritura_ha": 15.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 12.66,
+    "plantacion_pino": 2.24
+   }
+  },
+  {
+   "id": "ad-21",
+   "nombre_predio": "El Bosque",
+   "estado": "Adquirido",
+   "area_sig_ha": 38.86,
+   "area_escritura_ha": 18.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 11.82,
+    "plantacion_pino": 4.25,
+    "pastizal": 22.48,
+    "drenajes": 0.31
+   }
+  },
+  {
+   "id": "ad-22",
+   "nombre_predio": "La Argentina",
+   "estado": "Adquirido",
+   "area_sig_ha": 62.69,
+   "area_escritura_ha": 80.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 24.83,
+    "bosque_joven": 33.25,
+    "matorral": 1.01,
+    "pastizal": 1.69,
+    "sin_vegetacion": 0.04,
+    "vias": 1.88
+   }
+  },
+  {
+   "id": "ad-23",
+   "nombre_predio": "El Laurel",
+   "estado": "Adquirido",
+   "area_sig_ha": 4.19,
+   "area_escritura_ha": 4.0,
+   "cobertura_ha": {
+    "bosque_avanzado": 0.44,
+    "bosque_joven": 2.08,
+    "matorral": 1.15,
+    "pastizal": 0.38,
+    "sin_vegetacion": 0.13
+   }
+  },
+  {
+   "id": "pa-1",
+   "nombre_predio": "La Independencia",
+   "estado": "Por adquirir (listo para compra)",
+   "area_sig_ha": 14.91,
+   "area_escritura_ha": null,
+   "cobertura_ha": {
+    "bosque_avanzado": 11.5,
+    "bosque_joven": 3.4
+   }
+  },
+  {
+   "id": "pa-2",
+   "nombre_predio": "Ricon Santo-El Retiro",
+   "estado": "Por adquirir (listo para compra)",
+   "area_sig_ha": 8.33,
+   "area_escritura_ha": null,
+   "cobertura_ha": {
+    "bosque_avanzado": 6.69,
+    "bosque_joven": 1.08,
+    "plantacion_pino": 0.27,
+    "matorral": 0.29
+   }
+  },
+  {
+   "id": "pa-3",
+   "nombre_predio": "El Cedro",
+   "estado": "Por adquirir (listo para compra)",
+   "area_sig_ha": 6.08,
+   "area_escritura_ha": null,
+   "cobertura_ha": {
+    "bosque_avanzado": 6.0
+   }
+  },
+  {
+   "id": "pa-4",
+   "nombre_predio": "La Gaviota",
+   "estado": "Por adquirir (listo para compra)",
+   "area_sig_ha": 62.88,
+   "area_escritura_ha": null,
+   "cobertura_ha": {
+    "bosque_avanzado": 48.62,
+    "bosque_joven": 2.59,
+    "pastizal": 7.4,
+    "matorral": 2.95,
+    "sin_vegetacion": 0.14
+   }
+  },
+  {
+   "id": "pa-5",
+   "nombre_predio": "Los Cerezos",
+   "estado": "Por adquirir (listo para compra)",
+   "area_sig_ha": 29.43,
+   "area_escritura_ha": null,
+   "cobertura_ha": {
+    "bosque_avanzado": 24.3,
+    "bosque_joven": 1.42,
+    "plantacion_pino": 1.28,
+    "pastizal": 1.82,
+    "matorral": 0.09,
+    "vias": 0.52
+   }
+  },
+  {
+   "id": "pa-6",
+   "nombre_predio": "La Bretaña",
+   "estado": "Por adquirir (listo para compra)",
+   "area_sig_ha": 40.17,
+   "area_escritura_ha": null,
+   "cobertura_ha": {
+    "bosque_avanzado": 25.9,
+    "plantacion_pino": 11.09,
+    "pastizal": 2.15,
+    "sin_vegetacion": 0.13,
+    "vias": 0.9
+   }
+  }
+ ],
+ "resumen": {
+  "adquiridos": 23,
+  "por_adquirir": 6,
+  "ha_adquiridas_sig": 461.72,
+  "ha_por_adquirir_sig": 161.8,
+  "adquiridos_sin_area_sig": 6
+ },
+ "nota": "Datos anonimizados: solo nombre del predio, áreas y coberturas declaradas por FCV."
+}
