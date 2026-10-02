@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAB en cifras · visorRAB</title>
+  <meta name="description" content="Tablero territorial de la RAB: zonas de manejo, coberturas, biodiversidad, riesgos y predios. Fundación para la Conservación de la Vida Silvestre en Colombia.">
+  <meta name="theme-color" content="#050706">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="css/rab-tema.css">
+  <link rel="stylesheet" href="css/rab-tablero.css">
+  <link rel="stylesheet" href="css/rab-impresion.css">
+</head>
+<body>
+  <a class="skip" href="#principal">Saltar al contenido</a>
+  <div class="dashboard-frame">
+    <aside class="sidebar" id="sidebar" aria-label="Controles del tablero">
+      <button type="button" class="menu-toggle" id="btnMenu" aria-expanded="false" aria-controls="sideBody">☰ Controles y capas</button>
+      <div class="side-body" id="sideBody">
+        <div class="side-emblem"><img src="assets/logo-fcv.png" alt="Logo de la Fundación para la Conservación de la Vida Silvestre en Colombia (FCV)"><span class="side-brand-caption">Fundación para la Conservación<br>de la Vida Silvestre en Colombia</span></div>
+        <span class="side-section-label" id="lblModo">MODO DE VISTA</span>
+        <div id="viewModes" class="view-modes" role="group" aria-labelledby="lblModo"></div>
+        <div class="side-rule"></div>
+        <label class="side-section-label" for="zonaSelect">ZONA DE MANEJO</label>
+        <select id="zonaSelect"></select>
+        <label class="side-section-label base-label" for="baseSelect">MAPA BASE</label>
+        <select id="baseSelect">
+          <option value="claro">Claro</option><option value="color">Color</option><option value="oscuro">Oscuro</option><option value="satelite">Satélite</option>
+        </select>
+        <div class="side-rule"></div>
+        <span class="side-section-label">CAPAS Y TRANSPARENCIA</span>
+        <div id="layerControls" class="layer-controls"></div>
+        <div class="side-foot">Fuentes: FCV · Corpocaldas · IGAC · IUCN · Humboldt · eBird<span id="estadoRed" role="status"></span></div>
+      </div>
+    </aside>
+
+    <main class="canvas" id="principal">
+      <header class="headline">
+        <h1><span>RESERVA EN</span><span class="boxed-title" aria-label="CIFRAS"><i>C</i><i>I</i><i>F</i><i>R</i><i>A</i><i>S</i></span></h1>
+        <div class="headline-tools">
+          <div class="buscador">
+            <label class="sr-only" for="buscar">Buscar capas, especies, sitios y predios</label>
+            <input id="buscar" type="search" placeholder="Buscar capa, especie, sitio…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="resultados" aria-autocomplete="list">
+            <ul id="resultados" class="resultados" role="listbox" hidden></ul>
+          </div>
+          <button class="btn" type="button" id="btnTema" aria-label="Cambiar tema claro u oscuro">◐ Tema</button>
+          <button class="btn" type="button" id="btnEnlace">🔗 Copiar enlace</button>
+          <button class="btn" type="button" id="btnFicha">🖨 Ficha de zona</button>
+        </div>
+        <div class="headline-date" id="encabezadoDatos">RAB · Pensilvania, Caldas<br><strong id="encArea">—</strong></div>
+      </header>
+
+      <section class="kpi-strip" aria-label="Indicadores principales" id="kpis"></section>
+
+      <div class="main-grid">
+        <section class="card map-card" id="cardMapa" aria-label="Mapa de la reserva">
+          <div class="card-head">
+            <div><h2>MAPA | <span id="mapaTitulo">ZONIFICACIÓN</span></h2><small id="mapaSub">Clic en una zona para filtrar todo el tablero</small></div>
+            <div class="tools" role="toolbar" aria-label="Herramientas del mapa">
+              <button class="btn" type="button" id="tDist" aria-pressed="false">📏 Distancia</button>
+              <button class="btn" type="button" id="tArea" aria-pressed="false">⬠ Área</button>
+              <button class="btn" type="button" id="tGps">◎ Ubícame</button>
+              <button class="btn" type="button" id="tLeyenda" aria-pressed="true">☰ Leyenda</button>
+              <button class="btn" type="button" id="tPantalla">⛶ Pantalla completa</button>
+            </div>
+          </div>
+          <div id="mapWrap">
+            <div id="map" tabindex="0" role="application" aria-label="Mapa interactivo de la RAB. Use las herramientas y el panel de capas."></div>
+            <div class="leyenda" id="leyenda" aria-label="Leyenda de capas activas"></div>
+            <div class="medida" id="medida" hidden role="status"></div>
+          </div>
+          <div class="map-caption"><span id="mapaEstado">Preparando capas…</span><span id="mapaCoord">WGS84 · EPSG:4326</span></div>
+        </section>
+
+        <section class="card" id="cardZonas" data-modos="zonificacion">
+          <div class="card-head"><h2>ZONAS DE MANEJO</h2><small>Pulse para filtrar todo</small></div>
+          <div id="zonaLista" class="zona-list"></div>
+          <h3 class="subtitulo">Uso del suelo (vocación) en la selección</h3>
+          <ul id="zonaUso" class="bar-list"></ul>
+          <h3 class="subtitulo">Geomorfología · unidades principales</h3>
+          <ul id="zonaGeo" class="bar-list"></ul>
+          <p class="fuente zona-nota">Fuente: FCV, capa de ordenamiento predial (4 zonas de manejo); capas de uso del suelo y geomorfología (2012), metadatos por confirmar. Áreas en EPSG:9377.</p>
+        </section>
+
+        <section class="card" id="cardAlertas" data-modos="riesgos">
+          <div class="card-head"><div><h2>ALERTAS | VERIFICACIÓN</h2><small>Ordenadas por cercanía a la zona de conservación</small></div></div>
+          <div id="alertaLista" class="alert-list"></div>
+          <p class="card-note">Los puntos señalan dónde verificar en campo; no prueban afectación.</p>
+          <p class="fuente">Fuente: FCV, capas de riesgo. Distancias en metros a la zona de conservación (0 = dentro).</p>
+        </section>
+      </div>
+
+      <div class="lower-grid">
+        <section class="card" id="cardCobertura" data-modos="territorio">
+          <div class="card-head"><div><h2>COBERTURAS DE LA TIERRA</h2><small id="cobSub">—</small></div></div>
+          <div class="seg" role="group" aria-label="Fuente de la cobertura"><button type="button" id="cobFcv" aria-pressed="true">FCV (por predio)</button><button type="button" id="cobCorp" aria-pressed="false">Corpocaldas (por zona)</button></div>
+          <div class="anillo-wrap"><div id="cobAnillo" class="anillo" role="img"><div><strong id="cobPct">—</strong><span>Natural</span></div></div><ul id="cobLeyenda" class="leyenda-lista"></ul></div>
+          <p class="card-note" id="cobNota"></p>
+          <p class="fuente" id="cobFuente"></p>
+        </section>
+
+        <section class="card" id="cardBio" data-modos="biodiversidad">
+          <div class="card-head"><div><h2>BIODIVERSIDAD | REGISTROS POR GRUPO</h2><small id="bioSub">—</small></div></div>
+          <ul id="bioGrupos" class="bar-list"></ul>
+          <div class="filtros"><label class="sr-only" for="bioGrupoSel">Grupo para el esfuerzo de muestreo</label><select id="bioGrupoSel"><option value="todos">Todos los grupos</option></select></div>
+          <div id="bioAnios" class="anios" role="img" aria-label="Registros por año"></div>
+          <div class="timeline"><button type="button" id="bioPlay" aria-label="Reproducir secuencia de años">▶</button><label class="sr-only" for="bioSlider">Año</label><input id="bioSlider" type="range" min="2019" max="2025" step="1" value="2025"><strong id="bioAnio">—</strong></div>
+          <p class="anio-detalle" id="bioDetalle"></p>
+          <p class="fuente">Fuente: bases de aves, herpetos, mamíferos y mariposas de FCV (con datos IAvH, PNNSF, Aves Pensilvania y eBird). Jornada = fecha de muestreo distinta.</p>
+        </section>
+
+        <section class="card" id="cardRiesgos" data-modos="riesgos">
+          <div class="card-head"><div><h2>RIESGOS POR TIPO</h2><small id="riesgoSub">—</small></div></div>
+          <ul id="riesgoBarras" class="bar-list"></ul>
+          <p class="card-note">Cuenta de puntos registrados; los perros son detecciones de cámaras trampa, no individuos distintos.</p>
+          <p class="fuente">Fuente: FCV, capas de riesgo. En «Toda la reserva» se incluyen puntos del entorno inmediato.</p>
+        </section>
+
+        <section class="card" id="cardEspecies" data-modos="biodiversidad">
+          <div class="card-head"><div><h2>ESPECIES REGISTRADAS</h2><small id="espCuenta">—</small></div><button class="btn" type="button" id="espCsv">⬇ CSV</button></div>
+          <div class="filtros">
+            <label class="sr-only" for="espBuscar">Buscar taxón</label><input id="espBuscar" type="search" placeholder="Buscar taxón…">
+            <label class="sr-only" for="espCat">Categoría de amenaza</label>
+            <select id="espCat"><option value="ALL">Todas</option><option value="AMEN">Amenazadas (CR/EN/VU)</option><option value="CR">CR</option><option value="EN">EN</option><option value="VU">VU</option><option value="NT">NT</option></select>
+          </div>
+          <div class="tabla-scroll"><table><thead><tr><th>Grupo</th><th>Especie / nombre común</th><th class="num">Reg.</th><th>Cat.</th><th>Zona</th></tr></thead><tbody id="espCuerpo"></tbody></table></div>
+          <button class="btn mas" type="button" id="espMas" hidden>Mostrar más</button>
+          <p class="fuente">Fuente: bases de biodiversidad de FCV. Cat. = categoría UICN / nacional (la más alta). Solo se listan registros identificados a especie.</p>
+        </section>
+      </div>
+
+      <div class="lower-grid dos">
+        <section class="card" id="cardAgua" data-modos="agua">
+          <div class="card-head"><div><h2>AGUA | MICROCUENCAS</h2><small id="aguaSub">—</small></div></div>
+          <ul id="aguaBarras" class="bar-list"></ul>
+          <p class="fuente">Fuente: capas de hidrología (microcuencas y red hídrica de orden 3), intersectadas con la zona. Metadatos por confirmar en el catálogo.</p>
+        </section>
+        <section class="card" id="cardPredios" data-modos="zonificacion">
+          <div class="card-head"><div><h2>PREDIOS</h2><small id="predSub">—</small></div><button class="btn" type="button" id="predCsv">⬇ CSV</button></div>
+          <div class="tabla-scroll"><table><thead><tr><th>Predio</th><th>Estado</th><th class="num">Área SIG (ha)</th><th class="num">Bosque (ha)</th><th class="num">Pastizal (ha)</th></tr></thead><tbody id="predCuerpo"></tbody></table></div>
+          <p class="card-note" id="predNota"></p>
+          <p class="fuente">Fuente: bases prediales de FCV (adquiridos y listos para compra), anonimizadas: sin propietarios ni datos catastrales. Bosque = avanzado + joven.</p>
+        </section>
+      </div>
+      <div class="bottom-note">Cobertura natural según FCV y según Corpocaldas difieren porque son fuentes y escalas distintas. Registros ≠ abundancia. Puntos de riesgo ≠ afectación confirmada.</div>
+    </main>
+  </div>
+
+  <dialog id="dlgMeta" aria-labelledby="dlgTitulo"><form method="dialog"><h3 id="dlgTitulo"></h3><dl id="dlgCuerpo"></dl><p style="text-align:right;margin:14px 0 0"><button class="btn" value="cerrar">Cerrar</button></p></form></dialog>
+  <section id="ficha" class="solo-impresion" aria-hidden="true"></section>
+  <div id="aviso" role="status" aria-live="polite"></div>
+
+  <script src="vendor/maplibre-gl.js"></script>
+  <script src="js/rab-util.js"></script>
+  <script src="js/rab-estado.js"></script>
+  <script src="js/rab-catalogo.js"></script>
+  <script src="js/rab-mapa.js"></script>
+  <script src="js/rab-herramientas.js"></script>
+  <script src="js/rab-kpis.js"></script>
+  <script src="js/rab-graficos.js"></script>
+  <script src="js/rab-tablas.js"></script>
+  <script src="js/rab-buscador.js"></script>
+  <script src="js/rab-ficha.js"></script>
+  <script src="js/rab-app.js"></script>
+</body>
+</html>
