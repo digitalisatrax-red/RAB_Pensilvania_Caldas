@@ -45,6 +45,7 @@
   }
 
   let fallos = 0, actual = 'claro';
+  const ETIQ = { tiles: esri('Reference/World_Boundaries_and_Places'), attr: ATR_ESRI, max: 19 };
   function aviso(txt) {
     const c = document.getElementById('map'); if (!c) return;
     let a = c.querySelector('.base-aviso');
@@ -52,32 +53,43 @@
     if (!a) { a = document.createElement('div'); a.className = 'base-aviso'; a.setAttribute('role', 'status'); c.appendChild(a); }
     a.textContent = txt;
   }
+  // Primera capa de datos del visor: la base y las etiquetas se insertan por debajo / por encima de ella.
+  const primeraDato = () => [...mapa.visibles].flatMap((id) => ids(RAB.datos.porId.get(id))).find((i) => mapa.map.getLayer(i));
+  function quitarRaster(id) { const m = mapa.map; if (m.getLayer(id)) m.removeLayer(id); if (m.getSource(id)) m.removeSource(id); }
+  function ponRaster(id, b, antes, opac) {
+    const m = mapa.map;
+    m.addSource(id, { type: 'raster', tiles: b.tiles, tileSize: 256, maxzoom: b.max || 19, attribution: b.attr });
+    m.addLayer({ id, type: 'raster', source: id, paint: { 'raster-opacity': opac } }, antes);
+  }
   function base(nombre) {
-    actual = BASES[nombre] ? nombre : 'claro'; fallos = 0; aviso('');
-    const m = mapa.map, b = BASES[actual];
-    if (m.getLayer('base')) m.removeLayer('base');
-    if (m.getSource('base')) m.removeSource('base');
-    m.addSource('base', { type: 'raster', tiles: b.tiles, tileSize: 256, maxzoom: b.max || 19, attribution: b.attr });
-    const primero = [...mapa.visibles].flatMap((id) => ids(RAB.datos.porId.get(id))).find((i) => m.getLayer(i));
-    m.addLayer({ id: 'base', type: 'raster', source: 'base' }, primero);
+    const m = mapa.map, v = RAB.estado.v;
+    actual = nombre === 'blanco' || BASES[nombre] ? nombre : 'claro'; fallos = 0; aviso('');
+    quitarRaster('base'); quitarRaster('etq');
+    m.setPaintProperty('fondo', 'background-color', actual === 'oscuro' ? '#111413' : '#ffffff');
+    if (actual !== 'blanco') ponRaster('base', BASES[actual], primeraDato(), (v.bop ?? 100) / 100);
+    if (v.etq && actual !== 'blanco') ponRaster('etq', ETIQ, undefined, 1);
   }
   mapa.setBase = function (n) { if (mapa.listo) base(n); };
+  mapa.setOpacidadBase = function (pct) { if (mapa.listo && mapa.map.getLayer('base')) mapa.map.setPaintProperty('base', 'raster-opacity', pct / 100); };
+  mapa.setEtiquetas = function () { if (mapa.listo) base(actual); };
   // Si el mapa base no carga (red bloqueada o servicio caído) se pasa a OpenStreetMap y se avisa.
   function vigilarBase() {
     mapa.map.on('error', (e) => {
-      if (!e || !e.sourceId || e.sourceId !== 'base') return;
+      if (!e || !e.sourceId || (e.sourceId !== 'base')) return;
       if (++fallos === 4) {
-        if (actual !== 'osm') { aviso('El mapa base no responde; se usa OpenStreetMap.'); const sel = document.getElementById('baseSelect'); const m = mapa.map; fallos = 0; const b = BASES.osm; if (m.getLayer('base')) m.removeLayer('base'); if (m.getSource('base')) m.removeSource('base'); m.addSource('base', { type: 'raster', tiles: b.tiles, tileSize: 256, maxzoom: b.max || 19, attribution: b.attr }); const primero = [...mapa.visibles].flatMap((id) => ids(RAB.datos.porId.get(id))).find((i) => m.getLayer(i)); m.addLayer({ id: 'base', type: 'raster', source: 'base' }, primero); actual = 'osm'; }
-        else aviso('No se pudo cargar ningún mapa base. Revise la conexión; las capas del visor siguen disponibles.');
+        if (actual !== 'osm') {
+          aviso('El mapa base no responde; se usa OpenStreetMap.'); fallos = 0; actual = 'osm';
+          quitarRaster('base'); ponRaster('base', BASES.osm, primeraDato(), (RAB.estado.v.bop ?? 100) / 100);
+        } else aviso('No se pudo cargar ningún mapa base. Revise la conexión; las capas del visor siguen disponibles.');
       }
     });
-    mapa.map.on('data', (e) => { if (e.sourceId === 'base' && e.tile && actual && fallos === 0) aviso(''); });
+    mapa.map.on('data', (e) => { if (e.sourceId === 'base' && e.tile && fallos === 0) aviso(''); });
   }
 
   mapa.init = function () {
     const z = RAB.datos.zonas, v = RAB.estado.v.vista;
     const opciones = {
-      container: 'map', style: { version: 8, sources: {}, layers: [{ id: 'fondo', type: 'background', paint: { 'background-color': '#e9efec' } }] },
+      container: 'map', style: { version: 8, sources: {}, layers: [{ id: 'fondo', type: 'background', paint: { 'background-color': '#ffffff' } }] },
       attributionControl: { compact: true }, preserveDrawingBuffer: true, maxZoom: 19, dragRotate: false,
     };
     if (v) { opciones.center = [v[0], v[1]]; opciones.zoom = v[2]; } else { opciones.bounds = z.reserva.bbox; opciones.fitBoundsOptions = { padding: 36 }; }

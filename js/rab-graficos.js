@@ -7,13 +7,23 @@
 
   G.cobertura = function () {
     const d = RAB.datos, v = RAB.estado.v, z = v.zona, m = d.metricas();
+    const pd = RAB.predioSel && RAB.predioSel();
     const fcvOk = z === 'toda';
-    RAB.$('cobFcv').disabled = !fcvOk;
-    const fuente = fcvOk ? v.cob : 'corp';
-    RAB.$('cobFcv').setAttribute('aria-pressed', String(fuente === 'fcv'));
+    RAB.$('cobFcv').disabled = !fcvOk || !!pd; RAB.$('cobCorp').disabled = !!pd;
+    const fuente = pd ? 'predio' : fcvOk ? v.cob : 'corp';
+    RAB.$('cobFcv').setAttribute('aria-pressed', String(fuente === 'fcv' || fuente === 'predio'));
     RAB.$('cobCorp').setAttribute('aria-pressed', String(fuente === 'corp'));
+    const NOM = {};
+    d.zonas.cobertura_fcv.clases.forEach((x) => { NOM[x.nombre] = x.clase; });
     let items, pct, nota, fuenteTxt, sub;
-    if (fuente === 'fcv') {
+    if (fuente === 'predio') {
+      const ETQ = { bosque_avanzado: 'Bosque avanzado', bosque_joven: 'Bosque joven', matorral: 'Matorral', pastizal: 'Pastizal', plantacion_pino: 'Bosque de pino', vias: 'Vías', sin_vegetacion: 'Zonas sin vegetación', drenajes: 'Drenajes' };
+      items = Object.entries(pd.cobertura_ha).filter(([, ha]) => ha > 0).map(([k, ha]) => ({ n: ETQ[k] || k, ha, clase: NOM[ETQ[k]] || 'otra' }));
+      pct = RAB.predioNatural(pd) ?? 0;
+      sub = `Predio: ${pd.nombre_predio}`;
+      nota = items.length ? `Natural = bosque avanzado + bosque joven + matorral, sobre ${F.n(items.reduce((a, i) => a + i.ha, 0), 1)} ha con cobertura declarada para este predio.` : 'Este predio no tiene cobertura declarada en la base predial.';
+      fuenteTxt = 'Fuente: base predial de FCV (coberturas por predio).';
+    } else if (fuente === 'fcv') {
       const c = d.zonas.cobertura_fcv;
       items = c.clases.map((x) => ({ n: x.nombre, ha: x.ha, clase: x.clase }));
       pct = c.natural_pct;

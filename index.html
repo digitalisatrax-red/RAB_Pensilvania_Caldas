@@ -28,8 +28,11 @@
         <select id="zonaSelect"></select>
         <label class="side-section-label base-label" for="baseSelect">MAPA BASE</label>
         <select id="baseSelect">
-          <option value="claro">Claro</option><option value="color">Topográfico</option><option value="oscuro">Oscuro</option><option value="satelite">Satélite</option><option value="osm">OpenStreetMap</option>
+          <option value="blanco">Fondo blanco</option><option value="claro">Claro</option><option value="color">Topográfico</option><option value="oscuro">Oscuro</option><option value="satelite">Satélite</option><option value="osm">OpenStreetMap</option>
         </select>
+        <label class="base-ctl" for="baseOpac">Transparencia del mapa base: <b id="baseOpacVal">100 %</b></label>
+        <input type="range" id="baseOpac" min="0" max="100" step="5" value="100">
+        <label class="base-ctl chk"><input type="checkbox" id="baseEtq"> Nombres de lugares</label>
         <div class="side-rule"></div>
         <span class="side-section-label">CAPAS Y TRANSPARENCIA</span>
         <div id="layerControls" class="layer-controls"></div>
@@ -52,6 +55,7 @@
         </div>
         <div class="headline-date" id="encabezadoDatos">RAB · Pensilvania, Caldas<br><strong id="encArea">—</strong></div>
       </header>
+      <div id="predioBanner" class="predio-banner" role="status" hidden></div>
 
       <section class="kpi-strip" aria-label="Indicadores principales" id="kpis"></section>
 

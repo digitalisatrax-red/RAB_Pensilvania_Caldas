@@ -16,6 +16,17 @@
       ['⚠', F.n(b.amenazadas), 'Especies amenazadas VU/EN/CR'],
       ['◉', F.n(m.riesgos_total), 'Puntos de riesgo' + (z === 'toda' ? '<br>incluye entorno inmediato' : '<br>dentro de la zona')],
     ];
+    const pd = RAB.predioSel && RAB.predioSel();
+    if (pd) {
+      const area = pd.area_sig_ha ?? pd.area_escritura_ha, adq = /^Adquirido/.test(pd.estado);
+      const nat = RAB.predioNatural(pd), ctx = '<br>Toda la reserva (sin geometría por predio)';
+      k[0] = ['◈', pd.nombre_predio, 'Predio seleccionado · ' + pd.estado, 'kpi-nombre'];
+      k[1] = ['▧', F.n(area, 1), 'Superficie · ha<br>' + (pd.area_sig_ha === null ? 'Área de escritura (sin área SIG)' : 'Área SIG')];
+      k[2] = ['♧', adq ? F.n(area, 1) : '0', 'Bajo protección predial · ha<br>' + (adq ? 'Predio adquirido' : 'Aún no adquirido')];
+      k[3] = ['✦', nat === null ? '—' : F.n(nat, 1) + ' %', 'Cobertura natural declarada<br>FCV, ' + (pd.area_sig_ha === null && !Object.keys(pd.cobertura_ha).length ? 'sin dato' : 'por predio')];
+      k[4] = ['⚠', F.n(b.amenazadas), 'Especies amenazadas VU/EN/CR' + ctx];
+      k[5] = ['◉', F.n(m.riesgos_total), 'Puntos de riesgo' + ctx];
+    }
     RAB.$('kpis').innerHTML = k.map(([ic, v, et, cl]) => `<div class="kpi"><div class="kpi-icon" aria-hidden="true">${ic}</div><div><strong class="${cl || ''}">${RAB.esc(v)}</strong><small>${et}</small></div></div>`).join('');
     RAB.$('encArea').textContent = F.n(d.zonas.reserva.area_ha, 1) + ' ha';
   };
@@ -70,5 +81,15 @@
     barras(RAB.$('zonaGeo'), m.geomorfologia.slice(0, 4).map((x) => ({ et: x.nombre, v: x.ha })), (v) => F.n(v, 1) + ' ha');
   };
 
-  K.todo = function () { K.kpis(); K.zonas(); K.zonaExtra(); K.alertas(); K.riesgos(); K.agua(); };
+  RAB.predioSel = function () { const id = RAB.estado.v.predio; return id && RAB.datos.predios ? RAB.datos.predios.predios.find((p) => p.id === id) || null : null; };
+  RAB.predioNatural = function (p) { const c = p.cobertura_ha || {}, t = Object.values(c).reduce((a, x) => a + x, 0); return t ? 100 * ((c.bosque_avanzado || 0) + (c.bosque_joven || 0) + (c.matorral || 0)) / t : null; };
+  K.banner = function () {
+    const pd = RAB.predioSel(), el = RAB.$('predioBanner');
+    el.hidden = !pd;
+    if (!pd) return;
+    el.innerHTML = `<span>Predio seleccionado: <b>${RAB.esc(pd.nombre_predio)}</b> (${RAB.esc(pd.estado)}). Superficie y cobertura corresponden a este predio. La biodiversidad, los riesgos y el agua no pueden asignarse a un predio porque la base predial no tiene geometría: se muestran para toda la reserva.</span><button type="button" class="btn" id="predioQuitar">✕ Ver toda la reserva</button>`;
+    RAB.$('predioQuitar').onclick = () => RAB.estado.set({ predio: null });
+  };
+
+  K.todo = function () { K.banner(); K.kpis(); K.zonas(); K.zonaExtra(); K.alertas(); K.riesgos(); K.agua(); };
 })();

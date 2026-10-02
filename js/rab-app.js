@@ -85,6 +85,10 @@
     aplicarTema(); modos(); zonaSelect(); panelCapas();
     $('baseSelect').value = RAB.estado.v.base;
     $('baseSelect').onchange = (e) => RAB.estado.set({ base: e.target.value });
+    const bo = $('baseOpac'), ve = RAB.estado.v;
+    bo.value = ve.bop; $('baseOpacVal').textContent = ve.bop + ' %'; $('baseEtq').checked = !!ve.etq;
+    bo.oninput = () => { $('baseOpacVal').textContent = bo.value + ' %'; RAB.mapa.setOpacidadBase(+bo.value); RAB.estado.set({ bop: +bo.value }, { silencio: true }); };
+    $('baseEtq').onchange = (e) => { RAB.estado.set({ etq: e.target.checked }, { silencio: true }); RAB.mapa.setEtiquetas(); };
     $('btnTema').onclick = () => {
       const oscuro = RAB.estado.v.tema === 'oscuro';
       RAB.estado.set({ tema: oscuro ? 'claro' : 'oscuro' });
@@ -104,6 +108,7 @@
       if ('zona' in p) { porZona(); RAB.mapa.aplicarZona(); RAB.mapa.aZona(RAB.estado.v.zona); }
       if ('base' in p) { RAB.mapa.setBase(p.base); $('baseSelect').value = p.base; }
       if ('cob' in p) RAB.graficos.cobertura();
+      if ('predio' in p) { RAB.kpis.banner(); RAB.kpis.kpis(); RAB.graficos.cobertura(); RAB.tablas.predios(); }
     });
 
     pintarModo(); sincronizarPanel(); porZona();
@@ -112,7 +117,7 @@
     // Tablas pesadas en segundo plano: el primer pintado solo necesita catálogo y zonas.
     try {
       await RAB.datos.tablas();
-      RAB.graficos.bio(); RAB.tablas.especies(); RAB.tablas.predios(); RAB.buscador.indexar();
+      RAB.graficos.bio(); RAB.tablas.especies(); RAB.tablas.predios(); RAB.buscador.indexar(); if (RAB.estado.v.predio) { RAB.kpis.banner(); RAB.kpis.kpis(); RAB.graficos.cobertura(); }
     } catch (e) {
       ['bioGrupos', 'espCuerpo', 'predCuerpo'].forEach((i) => { const el = $(i); el.innerHTML = `<tr><td class="vacio" colspan="6">No se pudieron cargar las tablas (${RAB.esc(e.message)}).</td></tr>`; });
       RAB.buscador.indexar();

@@ -223,3 +223,10 @@ td i{font-style:italic}
 :root:not([data-tema="oscuro"]) .sidebar select,:root:not([data-tema="oscuro"]) .view-modes button{background:var(--pale);border:1px solid var(--edge)}
 :root:not([data-tema="oscuro"]) .view-modes button[aria-pressed="true"],:root:not([data-tema="oscuro"]) .view-modes button:hover{background:var(--accent);border-color:var(--accent)}
 .base-aviso{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;background:#fff8e6;color:#5a3f00;border:1px solid #d9a441;border-radius:6px;padding:4px 10px;font-size:11px;max-width:80%}
+
+.base-ctl{display:block;font-size:11px;margin:9px 0 2px}.base-ctl.chk{display:flex;gap:6px;align-items:center}.sidebar input[type=range]#baseOpac{width:100%;accent-color:var(--accent)}
+
+.predio-banner{display:flex;gap:10px;align-items:center;justify-content:space-between;background:#eef6ef;border:1px solid var(--green2);border-radius:8px;padding:8px 12px;margin:0 0 10px;font-size:12px;line-height:1.35}
+.predio-banner[hidden]{display:none}
+tr.fila-sel{cursor:pointer}tr.fila-sel:hover{background:var(--pale)}tr.fila-sel.sel{background:#dcebdc;font-weight:700}tr.fila-sel:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
+:root[data-tema="oscuro"] .predio-banner{background:#1b2a20}:root[data-tema="oscuro"] tr.fila-sel.sel{background:#254733}

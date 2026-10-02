@@ -7,7 +7,7 @@
     indice = d.cat.capas.map((c) => ({ g: 'Capas', t: c.nombre, s: d.cat.temas.find((x) => x.id === c.tema).nombre, k: RAB.norm(c.nombre + ' ' + c.tema), a: () => abrirCapa(c.id) }));
     if (d.bio) {
       Object.entries(d.bio.especies).forEach(([sp, e]) => indice.push({ g: 'Especies', t: sp, s: [e.nc, d.bio.grupos[e.g]].filter(Boolean).join(' · '), k: RAB.norm(sp + ' ' + (e.nc || '')), a: () => verEspecie(sp) }));
-      d.predios.predios.forEach((p) => indice.push({ g: 'Predios', t: p.nombre_predio, s: p.estado, k: RAB.norm(p.nombre_predio), a: () => { RAB.$('cardPredios').scrollIntoView({ behavior: 'smooth' }); RAB.aviso('Predio: ' + p.nombre_predio); } }));
+      d.predios.predios.forEach((p) => indice.push({ g: 'Predios', t: p.nombre_predio, s: p.estado, k: RAB.norm(p.nombre_predio), a: () => { RAB.estado.set({ predio: p.id }); RAB.$('cardPredios').scrollIntoView({ behavior: 'smooth' }); RAB.aviso('Predio: ' + p.nombre_predio); } }));
     }
   };
   /* Los nombres de sitios se leen de las capas de monitoreo (se cargan una vez, en segundo plano). */

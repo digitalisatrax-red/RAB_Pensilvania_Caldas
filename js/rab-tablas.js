@@ -58,8 +58,12 @@
   T.predios = function () {
     const P = RAB.datos.predios, r = P.resumen;
     RAB.$('predSub').textContent = `${r.adquiridos} adquiridos (${F.n(r.ha_adquiridas_sig, 1)} ha SIG) · ${r.por_adquirir} listos para compra (${F.n(r.ha_por_adquirir_sig, 1)} ha)`;
-    RAB.$('predCuerpo').innerHTML = P.predios.map((p) => `<tr><td>${RAB.esc(p.nombre_predio)}</td><td>${RAB.esc(p.estado)}</td><td class="num">${p.area_sig_ha === null ? '—' : F.n(p.area_sig_ha, 2)}</td><td class="num">${p.cobertura_ha.bosque_avanzado || p.cobertura_ha.bosque_joven ? F.n(bosque(p), 2) : '—'}</td><td class="num">${p.cobertura_ha.pastizal ? F.n(p.cobertura_ha.pastizal, 2) : '—'}</td></tr>`).join('');
-    RAB.$('predNota').textContent = `${r.adquiridos_sin_area_sig} predios adquiridos no tienen área SIG en la base (solo área de escritura). La base predial no tiene geometría: esta tabla no cambia con la zona.`;
+    RAB.$('predCuerpo').innerHTML = P.predios.map((p) => `<tr class="fila-sel${RAB.estado.v.predio === p.id ? ' sel' : ''}" data-id="${p.id}" tabindex="0" aria-selected="${RAB.estado.v.predio === p.id}"><td>${RAB.esc(p.nombre_predio)}</td><td>${RAB.esc(p.estado)}</td><td class="num">${p.area_sig_ha === null ? '—' : F.n(p.area_sig_ha, 2)}</td><td class="num">${p.cobertura_ha.bosque_avanzado || p.cobertura_ha.bosque_joven ? F.n(bosque(p), 2) : '—'}</td><td class="num">${p.cobertura_ha.pastizal ? F.n(p.cobertura_ha.pastizal, 2) : '—'}</td></tr>`).join('');
+    RAB.$('predCuerpo').querySelectorAll('tr').forEach((tr) => {
+      const alt = () => RAB.estado.set({ predio: RAB.estado.v.predio === tr.dataset.id ? null : tr.dataset.id });
+      tr.onclick = alt; tr.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alt(); } };
+    });
+    RAB.$('predNota').textContent = `${r.adquiridos_sin_area_sig} predios adquiridos no tienen área SIG en la base (solo área de escritura). Haga clic en un predio para ver su superficie y cobertura en el tablero. La base predial no tiene geometría: esta tabla no cambia con la zona.`;
   };
   T.csvPredios = function () {
     const P = RAB.datos.predios.predios;
