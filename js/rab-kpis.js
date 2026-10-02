@@ -19,7 +19,7 @@
     const pd = RAB.predioSel && RAB.predioSel();
     if (pd) {
       const area = pd.area_sig_ha ?? pd.area_escritura_ha, adq = /^Adquirido/.test(pd.estado);
-      const nat = RAB.predioNatural(pd), ctx = '<br>Toda la reserva (sin geometría por predio)';
+      const nat = RAB.predioNatural(pd), ctx = '<br>Toda la reserva (aún no cruzado por predio)';
       k[0] = ['◈', pd.nombre_predio, 'Predio seleccionado · ' + pd.estado, 'kpi-nombre'];
       k[1] = ['▧', F.n(area, 1), 'Superficie · ha<br>' + (pd.area_sig_ha === null ? 'Área de escritura (sin área SIG)' : 'Área SIG')];
       k[2] = ['♧', adq ? F.n(area, 1) : '0', 'Bajo protección predial · ha<br>' + (adq ? 'Predio adquirido' : 'Aún no adquirido')];
@@ -87,7 +87,7 @@
     const pd = RAB.predioSel(), el = RAB.$('predioBanner');
     el.hidden = !pd;
     if (!pd) return;
-    el.innerHTML = `<span>Predio seleccionado: <b>${RAB.esc(pd.nombre_predio)}</b> (${RAB.esc(pd.estado)}). Superficie y cobertura corresponden a este predio. La biodiversidad, los riesgos y el agua no pueden asignarse a un predio porque la base predial no tiene geometría: se muestran para toda la reserva.</span><button type="button" class="btn" id="predioQuitar">✕ Ver toda la reserva</button>`;
+    el.innerHTML = `<span>Predio seleccionado: <b>${RAB.esc(pd.nombre_predio)}</b> (${RAB.esc(pd.estado)}). Superficie y cobertura corresponden a este predio. La biodiversidad, los riesgos y el agua no pueden asignarse a un predio porque aún no se han cruzado con los polígonos de los predios: se muestran para toda la reserva.</span><button type="button" class="btn" id="predioQuitar">✕ Ver toda la reserva</button>`;
     RAB.$('predioQuitar').onclick = () => RAB.estado.set({ predio: null });
   };
 
