@@ -108,7 +108,7 @@
       if ('zona' in p) { porZona(); RAB.mapa.aplicarZona(); RAB.mapa.aZona(RAB.estado.v.zona); }
       if ('base' in p) { RAB.mapa.setBase(p.base); $('baseSelect').value = p.base; }
       if ('cob' in p) RAB.graficos.cobertura();
-      if ('predio' in p) { RAB.kpis.banner(); RAB.kpis.kpis(); RAB.graficos.cobertura(); RAB.tablas.predios(); }
+      if ('predio' in p) { RAB.mapa.aplicarPredio(); RAB.kpis.banner(); RAB.kpis.kpis(); RAB.graficos.cobertura(); RAB.tablas.predios(); }
     });
 
     pintarModo(); sincronizarPanel(); porZona();
