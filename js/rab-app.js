@@ -71,6 +71,13 @@
     s.innerHTML = '<option value="toda">Toda la reserva</option>' + RAB.datos.zonas.zonas.map((z) => `<option value="${z.id}">${RAB.esc(z.nombre)}</option>`).join('');
     s.onchange = () => RAB.estado.set({ zona: s.value });
   }
+  function predioSelect() {
+    const s = $('predioSelect'); if (!s || !RAB.datos.predios) return;
+    s.innerHTML = '<option value="">Toda la reserva</option>' + RAB.datos.predios.predios.map((p) => `<option value="${p.id}">${RAB.esc(p.nombre_predio)} · ${p.estado === 'Adquirido' ? 'adq.' : 'por adq.'}${p.area_sig_ha ? ' · ' + RAB.fmt.n(p.area_sig_ha, 1) + ' ha' : ''}</option>`).join('');
+    s.onchange = () => RAB.estado.set({ predio: s.value || null });
+    s.value = RAB.estado.v.predio || '';
+  }
+  function predioSel() { const s = $('predioSelect'); if (s) s.value = RAB.estado.v.predio || ''; }
   function porZona() {
     RAB.kpis.todo(); RAB.graficos.cobertura();
     if (RAB.datos.bio) { RAB.graficos.bio(); RAB.tablas.especies(); }
@@ -108,7 +115,7 @@
       if ('zona' in p) { porZona(); RAB.mapa.aplicarZona(); RAB.mapa.aZona(RAB.estado.v.zona); }
       if ('base' in p) { RAB.mapa.setBase(p.base); $('baseSelect').value = p.base; }
       if ('cob' in p) RAB.graficos.cobertura();
-      if ('predio' in p) { RAB.mapa.aplicarPredio(); RAB.kpis.banner(); RAB.kpis.kpis(); RAB.graficos.cobertura(); RAB.tablas.predios(); }
+      if ('predio' in p) { predioSel(); RAB.mapa.aplicarPredio(); RAB.kpis.banner(); RAB.kpis.kpis(); RAB.graficos.cobertura(); RAB.tablas.predios(); }
     });
 
     pintarModo(); sincronizarPanel(); porZona();
@@ -117,7 +124,7 @@
     // Tablas pesadas en segundo plano: el primer pintado solo necesita catálogo y zonas.
     try {
       await RAB.datos.tablas();
-      RAB.graficos.bio(); RAB.tablas.especies(); RAB.tablas.predios(); RAB.buscador.indexar(); if (RAB.estado.v.predio) { RAB.kpis.banner(); RAB.kpis.kpis(); RAB.graficos.cobertura(); }
+      RAB.graficos.bio(); RAB.tablas.especies(); RAB.tablas.predios(); predioSelect(); RAB.buscador.indexar(); if (RAB.estado.v.predio) { RAB.kpis.banner(); RAB.kpis.kpis(); RAB.graficos.cobertura(); }
     } catch (e) {
       ['bioGrupos', 'espCuerpo', 'predCuerpo'].forEach((i) => { const el = $(i); el.innerHTML = `<tr><td class="vacio" colspan="6">No se pudieron cargar las tablas (${RAB.esc(e.message)}).</td></tr>`; });
       RAB.buscador.indexar();
