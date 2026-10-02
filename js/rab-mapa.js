@@ -6,6 +6,7 @@
     claro: { tiles: carto('light_all'), attr: '© OpenStreetMap · © CARTO' },
     color: { tiles: carto('rastertiles/voyager'), attr: '© OpenStreetMap · © CARTO' },
     oscuro: { tiles: carto('dark_all'), attr: '© OpenStreetMap · © CARTO' },
+    osm: { tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], attr: '© OpenStreetMap contributors' },
     satelite: { tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], attr: 'Imágenes © Esri, Maxar, Earthstar Geographics' },
   };
   const RANGO = { poligono: 0, linea: 1, punto: 2 };
@@ -42,8 +43,17 @@
     return { circle: { 'circle-color': c, 'circle-radius': s.radio ?? 5, 'circle-stroke-color': s.borde || '#ffffff', 'circle-stroke-width': 1.5, 'circle-opacity': o, 'circle-stroke-opacity': o } };
   }
 
+  let fallos = 0, actual = 'claro';
+  function aviso(txt) {
+    const c = document.getElementById('map'); if (!c) return;
+    let a = c.querySelector('.base-aviso');
+    if (!txt) { if (a) a.remove(); return; }
+    if (!a) { a = document.createElement('div'); a.className = 'base-aviso'; a.setAttribute('role', 'status'); c.appendChild(a); }
+    a.textContent = txt;
+  }
   function base(nombre) {
-    const m = mapa.map, b = BASES[nombre] || BASES.claro;
+    actual = BASES[nombre] ? nombre : 'claro'; fallos = 0; aviso('');
+    const m = mapa.map, b = BASES[actual];
     if (m.getLayer('base')) m.removeLayer('base');
     if (m.getSource('base')) m.removeSource('base');
     m.addSource('base', { type: 'raster', tiles: b.tiles, tileSize: 256, maxzoom: 19, attribution: b.attr });
@@ -51,6 +61,17 @@
     m.addLayer({ id: 'base', type: 'raster', source: 'base' }, primero);
   }
   mapa.setBase = function (n) { if (mapa.listo) base(n); };
+  // Si el mapa base no carga (red bloqueada o servicio caído) se pasa a OpenStreetMap y se avisa.
+  function vigilarBase() {
+    mapa.map.on('error', (e) => {
+      if (!e || !e.sourceId || e.sourceId !== 'base') return;
+      if (++fallos === 4) {
+        if (actual !== 'osm') { aviso('El mapa base no responde; se usa OpenStreetMap.'); const sel = document.getElementById('baseSelect'); const m = mapa.map; fallos = 0; const b = BASES.osm; if (m.getLayer('base')) m.removeLayer('base'); if (m.getSource('base')) m.removeSource('base'); m.addSource('base', { type: 'raster', tiles: b.tiles, tileSize: 256, maxzoom: 19, attribution: b.attr }); const primero = [...mapa.visibles].flatMap((id) => ids(RAB.datos.porId.get(id))).find((i) => m.getLayer(i)); m.addLayer({ id: 'base', type: 'raster', source: 'base' }, primero); actual = 'osm'; }
+        else aviso('No se pudo cargar ningún mapa base. Revise la conexión; las capas del visor siguen disponibles.');
+      }
+    });
+    mapa.map.on('data', (e) => { if (e.sourceId === 'base' && e.tile && actual && fallos === 0) aviso(''); });
+  }
 
   mapa.init = function () {
     const z = RAB.datos.zonas, v = RAB.estado.v.vista;
@@ -63,7 +84,7 @@
     m.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     m.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-right');
     m.on('load', () => {
-      mapa.listo = true; base(RAB.estado.v.base); mapa.sincronizar();
+      mapa.listo = true; base(RAB.estado.v.base); vigilarBase(); mapa.sincronizar();
       if (!v && RAB.estado.v.zona !== 'toda') mapa.aZona(RAB.estado.v.zona);
     });
     m.on('moveend', () => { const c = m.getCenter(); RAB.estado.set({ vista: [+c.lng.toFixed(5), +c.lat.toFixed(5), +m.getZoom().toFixed(2)] }, { silencio: true }); });
